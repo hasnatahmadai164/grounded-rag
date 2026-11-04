@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "grounded-rag"
+version = "0.1.0"
+description = "Citation-first question answering over private documents with permission-aware retrieval and a built-in evaluation harness."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+authors = [{ name = "Hasnat Ahmad" }]
+dependencies = [
+  "fastapi~=0.162",
+  "uvicorn~=0.54",
+  "pydantic~=2.14",
+  "pydantic-settings~=2.16",
+  "sqlalchemy[asyncio]~=2.1",
+  "asyncpg~=0.32",
+  "alembic~=1.20",
+  "structlog~=26.1",
+  "typer~=0.27",
+  "httpx~=0.28",
+  "langgraph~=1.2",
+  "pypdf~=6.21",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest~=9.1",
+  "pytest-asyncio~=1.4",
+  "ruff~=0.17",
+  "mypy~=2.4",
+]
+
+[project.scripts]
+grounded-rag = "grounded_rag.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/grounded_rag"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "ASYNC", "C4", "RUF", "PT"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ASYNC240", "PT018"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["grounded_rag"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src"]
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-ra"
+markers = [
+  "live: needs real OpenAI or Pinecone credentials; skipped unless RUN_LIVE=1",
+  "db: needs PostgreSQL via TEST_DATABASE_URL; skipped when it is not set",
+]
