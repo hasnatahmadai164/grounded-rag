@@ -1,0 +1,48 @@
+# Local operation. The PostgreSQL credentials below are for a database that is
+# only published on the loopback interface. Do not reuse them elsewhere.
+x-app: &app
+  build: .
+  image: grounded-rag:local
+  env_file:
+    - path: .env
+      required: false
+  environment: &app-environment
+    DATABASE_URL: postgresql+asyncpg://grounded_rag:grounded_rag@postgres:5432/grounded_rag
+    LOG_JSON: "true"
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: grounded_rag
+      POSTGRES_PASSWORD: grounded_rag
+      POSTGRES_DB: grounded_rag
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grounded_rag -d grounded_rag"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    <<: *app
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    <<: *app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data:ro
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
