@@ -1,0 +1,5 @@
+name = "hybrid_rerank_retry"
+description = "Hybrid search, reranking, and up to two query rewrites when the context is judged insufficient."
+retrieval_mode = "hybrid"
+rerank = true
+max_rewrites = 2

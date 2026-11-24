@@ -1,0 +1,5 @@
+name = "hybrid_rerank"
+description = "Hybrid search followed by listwise LLM reranking. No retry."
+retrieval_mode = "hybrid"
+rerank = true
+max_rewrites = 0

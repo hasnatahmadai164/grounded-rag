@@ -1,0 +1,5 @@
+name = "hybrid"
+description = "Dense and lexical search merged with reciprocal rank fusion. No reranking and no retry."
+retrieval_mode = "hybrid"
+rerank = false
+max_rewrites = 0

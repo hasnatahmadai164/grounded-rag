@@ -1,0 +1,5 @@
+name = "dense_only"
+description = "Dense vector search only. No reranking and no retry."
+retrieval_mode = "dense"
+rerank = false
+max_rewrites = 0
